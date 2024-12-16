@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koolhydraten Calculator</title>
+
+    <!-- Koppeling naar het manifest-bestand -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Iconen voor de browser-tab en PWA -->
+    <link rel="icon" href="icon-192x192.png" sizes="192x192" type="image/png">
+    <link rel="icon" href="icon-512x512.png" sizes="512x512" type="image/png">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #23A9E4;
+        }
+
+        .search-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        input {
+            padding: 10px;
+            width: 80%;
+            max-width: 300px;
+            font-size: 16px;
+            border: 2px solid #00008b;
+            border-radius: 5px;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Koolhydraten Calculator</h1>
+    
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Typ een voedingsmiddel of drank..." autocomplete="off">
+    </div>
+
+    <div class="result" id="result"></div>
+
+    <!-- Registreren van de service worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then((registration) => {
+                    console.log('Service Worker geregistreerd met scope:', registration.scope);
+                })
+                .catch((error) => {
+                    console.log('Service Worker registratie mislukt:', error);
+                });
+        }
+    </script>
+
+    <script>
+        const foodDatabase = {
+  "appel": 15,
+  "banaan": 18.8,
+  "brood (wit)": 13.5,
+  "cola": 10.6,
+  "melk (volle)": 4.3,
+  "tomaat": 1.9,
+  "aardappelen (gekookt)": 17,
+  "aardappelkroketten": 27,
+  "aardappelpuree": 12,
+  "aardappelzetmeel": 81,
+  "aardbeien": 6.5,
+  "abrikoos": 5.2,
+  "abrikoos (blik)": 17,
+  "achterham": 1.7,
+  "amandelbroodje": 50.7,
+  "amandelen": 6.2,
+  "amsoi (gekookt)": 5.3,
+  "ananas (vers)": 13.5,
+  "ananassap": 11.5,
+  "andijvie (rauw)": 1,
+  "ansjovis": 0,
+  "appel": 15,
+  "appelflap": 40,
+  "appelmoes": 19.2,
+  "appelsiensap": 10.5,
+  "appelstroop": 12.6,
+  "appeltaart": 35,
+  "aquarius": 23.7,
+  "artisjok": 9.5,
+  "asperges (blik)": 3.2,
+  "asperges (vers)": 1.3,
+  "aubergine": 3.5,
+  "augurken": 2,
+  "avocado": 1.2,
+  "baars": 0,
+  "bacon": 0,
+  "bambix": 72,
+  "bamboescheuten": 3.5,
+  "bami goreng": 17.7,
+  "banaan": 18.8,
+  "basterdsuiker": 95.5,
+  "beenham": 1.4,
+  "berlinerbol": 46,
+  "beschuit": 70.8,
+  "bessensap": 9.4,
+  "biefstuk": 0,
+  "biefstuk van de haas": 0,
+  "bieslook": 8.5,
+  "biscuitje (groot)": 65,
+  "bitterbal": 5,
+  "bladerdeeg": 37.5,
+  "bleekselderij": 3.5,
+  "blinde vink": 0,
+  "bloem": 69.8,
+  "bloemkool": 2.2,
+  "boerenkool": 5.5,
+  "bokking (gebakken)": 0,
+  "bokking (gerookt)": 0,
+  "bonbon": 70,
+  "bosbessen": 14.5,
+  "boter (gezouten)": 0,
+  "boter (halfvol)": 0.1,
+  "boterhamworst": 2.9,
+  "boterkoek": 55,
+  "braadworst (varken)": 1.5,
+  "bramen": 8.5,
+  "brie 50+": 0,
+  "brinta": 65,
+  "broccoli": 2,
+  "bronwater": 0,
+  "brood (bruin)": 18.2,
+  "brood (krenten)": 16.2,
+  "brood (meergranen)": 13.5,
+  "brood (rozijnen)": 20.7,
+  "brood (tarwe)": 19.5,
+  "brood (volkoren)": 13.1,
+  "brood (wit)": 13.5,
+  "bulgaarse yoghurt (vol)": 6.5,
+  "cacaopoeder": 10.8,
+  "cashew-noten": 22.5,
+  "casselerrib": 1,
+  "champignons (blik)": 2.5,
+  "champignons (vers)": 0.3,
+  "cheddar kaas 50+": 0.5,
+  "chocolade (melk)": 55,
+  "chocolade (met noten)": 44,
+  "chocolade (puur)": 49,
+  "chocoladehagelslag": 63.6,
+  "chocolademelk (halfvol)": 13.3,
+  "chocolademelk (mager)": 12,
+  "chocolademelk (vol)": 12.9,
+  "citroen": 3.3,
+  "cocktailsaus (devos lemmens)": 7.1,
+  "corned beef": 3.5,
+  "cornflakes (ongesuikerd)": 81.5,
+  "cottage cheese": 2.9,
+  "courgette": 4.5,
+  "curryketchup": 33,
+  "currysaus": 30,
+  "dadels (geconfijt)": 65,
+  "dadels (vers)": 33,
+  "doperwten (blik)": 10.8,
+  "doperwten (vers)": 8.9,
+  "druiven (blauw)": 11.5,
+  "ei (dooier)": 0,
+  "ei (eiwit)": 0.2,
+  "ei (gekookt)": 0.4,
+  "ei (rauw)": 0,
+  "eiersalade": 7,
+  "entrecote (kalf)": 0.2,
+  "entrecote (rund)": 0.2,
+  "erwten": 16.5,
+  "feta kaas": 1.2,
+  "filet americain": 1.8,
+  "forel (bereid)": 0,
+  "frambozen": 14.3,
+  "frieten": 48.5,
+  "fritessaus (25% olie)": 12,
+  "fritessaus, 35% olie": 12,
+  "frituurvet": 0,
+  "gans": 0.5,
+  "garnalen (Noordzee)": 0,
+  "gehakt (gemengd)": 0,
+  "gehakt (kalf)": 0,
+  "gehakt (rund)": 0.8,
+  "gierst": 60,
+  "grapefruit": 9.5,
+  "haas": 0,
+  "ham (rauw)": 1,
+  "haring (gerookt)": 0,
+  "haring (zoute)": 1,
+  "haring (zure)": 0.5,
+  "haverkoek": 55,
+  "havermeel": 62,
+  "havermout": 62,
+  "havermoutpap": 9.5,
+  "hazelnoten": 10.6,
+  "heilbot": 0,
+  "honing": 22.7,
+  "ijs": 19.7,
+  "ijs (gemiddeld)": 21,
+  "jam": 60,
+  "kaas 10+": 0,
+  "kabeljauwfilet": 0.6,
+  "kalfsvlees (mager)": 0,
+  "kalkoenborst": 0.6,
+  "kastanjes": 35,
+  "kaviaar": 0,
+  "kerriesaus": 36,
+  "kersen": 12,
+  "kervel": 12,
+  "ketchup": 4.3,
+  "ketjap": 9.3,
+  "kievietsbonen": 43,
+  "kip (met vel)": 0,
+  "kip (rollade)": 1.5,
+  "kip (zonder vel)": 0,
+  "kipfilet": 0,
+  "kippenborst": 0,
+  "kippenbout": 0,
+  "kippenlever": 1,
+  "kiwi": 8.2,
+  "knoflook": 0.6,
+  "knolselderij (bereid)": 5,
+  "koffie (melk)": 2.4,
+  "koffie (zwart)": 0,
+  "kokosbrood": 35,
+  "kokosnoot": 3,
+  "komkommer": 2.2,
+  "konijn (wild)": 0,
+  "koolraap": 5,
+  "koolrabi": 4,
+  "koolvis": 0,
+  "krab": 1,
+  "kreeft": 0,
+  "krenten": 75,
+  "kruisbessen": 8,
+  "kumquat": 7.4,
+  "kwark (Mager - Aldi)": 3,
+  "kwark (Mager - Milbona)": 4.4,
+  "kwark (Vol - Almhof)": 14.1,
+  "lamskarbonade": 0,
+  "lamsvlees (mager)": 0,
+  "lijnzaadolie": 0,
+  "mais (blik)": 22.5,
+  "mais (kolf)": 23.1,
+  "maizena": 90.5,
+  "makreel (bereid)": 0,
+  "mandarijn": 4.5,
+  "mango": 10.2,
+  "margarine (80% vet)": 0.1,
+  "margarine (vloeibaar)": 0,
+  "mayonaise 50%": 0.4,
+  "melk (half volle)": 4.8,
+  "melk (magere)": 5.1,
+  "melk (soja)": 1,
+  "melk (volle)": 4.3,
+  "meloen (honing)": 7,
+  "meloen (water)": 7.8,
+  "mosterd": 7.4,
+  "mozzarella": 4.6,
+  "muesli": 66.5,
+  "nasi goreng": 26,
+  "nectarine": 7.5,
+  "olie (mais)": 0,
+  "olie (olijf)": 0,
+  "olie (zonnebloem)": 0,
+  "olijven": 0.2,
+  "ontbijtspek": 0.4,
+  "ontbijtspek (gegrild)": 0.2,
+  "ossehaas": 0,
+  "paardenvlees": 0,
+  "paling (gerookt)": 0,
+  "paling (onbereid)": 0,
+  "pannenkoek": 30,
+  "papaya": 14.8,
+  "paprika": 3.6,
+  "paprikapoeder": 0.4,
+  "paranoten": 4.5,
+  "passievrucht": 22.3,
+  "pasta (bereid)": 17.5,
+  "patrijs": 40,
+  "peer": 11,
+  "peren op siroop": 17.5,
+  "perzik": 10.9,
+  "peterselie (vers)": 1.5,
+  "pijnboompitten": 13.5,
+  "pindakaas": 12,
+  "pindaolie": 0,
+  "pinda's (gezouten)": 10,
+  "pinda's (ongezouten)": 11.2,
+  "pistachenootjes (geroosterd)": 8.4,
+  "pistachenootjes (ongezouten)": 24,
+  "pistolet": 44,
+  "pizza (gem.)": 64.3,
+  "pizza (mini)": 24.5,
+  "prei (bereid)": 3.8,
+  "rauwkost (bladgroente)": 2.9,
+  "ravioli (bereid)": 13.5,
+  "riblap": 0,
+  "rijst (wit bereid)": 20,
+  "rijst (zilvervlies bereid)": 24,
+  "rijstwafel": 6,
+  "rode biet (vers)": 7,
+  "rode kool (bereid)": 2.4,
+  "rosbief (rund)": 0.8,
+  "rozijnen": 66.5,
+  "runderlappen (bereid)": 0.7,
+  "runderrollade (mager)": 0.8,
+  "sardines (olie - blik)": 0,
+  "saus (wit - roux)": 7,
+  "scampi": 1.3,
+  "schnitzel (ongepaneerd)": 0,
+  "shoarmavlees": 0,
+  "sinaasappel": 11,
+  "sla": 1,
+  "slasaus 25%": 10,
+  "slasaus 40%": 6,
+  "snijbonen": 2,
+  "spaghetti (bereid)": 11.9,
+  "spinazie (bereid)": 0.6,
+  "stokbrood": 58,
+  "struisvogelsteak": 1,
+  "suiker (wit)": 99,
+  "tarwebloem": 69.8,
+  "thee (groen)": 0,
+  "thee (zwart)": 0,
+  "tomaat": 1.9,
+  "tomatensaus": 6.9,
+  "tonijn (natuur, blik)": 0,
+  "tonijn (olie, blik)": 0,
+  "ui (gebakken)": 5,
+  "ui (rauw)": 1.8,
+  "varkenshaas": 0,
+  "varkenskarbonade": 0.1,
+  "varkensschouderlap": 0,
+  "varkensvlees (spier)": 0,
+  "wafel (choco)": 59,
+  "wafel (suiker)": 60,
+  "wafels": 70,
+  "walnoten": 12.1,
+  "water (mineraal)": 0,
+  "witloof": 1.9,
+  "witte bonen": 14.5,
+  "witte kool": 3.8,
+  "wortelen (vers)": 5.2,
+  "zalm (blik)": 0,
+  "zalm (gerookt)": 0,
+  "zalmfilet": 0,
+  "zeebaars": 0,
+  "zeeduivel": 0
+ };
+document.getElementById('searchInput').addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const result = document.getElementById('result');
+
+        if (searchTerm.trim() === "") {
+            result.innerHTML = "";
+            return;
+        }
+
+        const matches = Object.keys(foodDatabase).filter(food => food.toLowerCase().startsWith(searchTerm));
+        result.innerHTML = matches.length 
+            ? matches.map(match => `
+                <strong>${match.charAt(0).toUpperCase() + match.slice(1)}</strong> 
+                bevat ${foodDatabase[match]}g koolhydraten per 100g
+            `).join('<br>')
+            : `
+                <p>Voedingsmiddel of drank niet gevonden in database.</p>
+                <p><a href="https://www.google.com/search?q=koolhydraten+in+${encodeURIComponent(searchTerm)}" target="_blank">
+                Zoek koolhydraten in ${searchTerm} op Google</a></p>
+            `;});
+    </script>
+</body>
+</html>

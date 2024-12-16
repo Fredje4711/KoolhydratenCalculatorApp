@@ -1,0 +1,21 @@
+{
+  "name": "Koolhydraten Calculator",
+  "short_name": "KoolhydratenApp",
+  "description": "Zoek voedingsmiddelen en hun koolhydratengehalte.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4CAF50",
+  "icons": [
+    {
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
