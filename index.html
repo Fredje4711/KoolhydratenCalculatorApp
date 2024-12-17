@@ -17,7 +17,7 @@
             font-family: Arial, sans-serif;
             max-width: 450px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 2px;
             background: #23A9E4;
         }
 
@@ -40,7 +40,7 @@
             padding: 15px;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,139,1);
         }
 
         h1 {
@@ -367,25 +367,30 @@
   "zeeduivel": 0
  };
 document.getElementById('searchInput').addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        const result = document.getElementById('result');
+    const searchTerm = e.target.value.toLowerCase();
+    const result = document.getElementById('result');
 
-        if (searchTerm.trim() === "") {
-            result.innerHTML = "";
-            return;
-        }
+    // Controleer of het zoekveld leeg is
+    if (searchTerm.trim() === "") {
+        result.innerHTML = ""; // Maak de resultaten leeg
+        return;
+    }
 
-        const matches = Object.keys(foodDatabase).filter(food => food.toLowerCase().startsWith(searchTerm));
-        result.innerHTML = matches.length 
-            ? matches.map(match => `
-                <strong>${match.charAt(0).toUpperCase() + match.slice(1)}</strong> 
-                bevat ${foodDatabase[match]}g koolhydraten per 100g
-            `).join('<br>')
-            : `
-                <p>Voedingsmiddel of drank niet gevonden in database.</p>
-                <p><a href="https://www.google.com/search?q=koolhydraten+in+${encodeURIComponent(searchTerm)}" target="_blank">
-                Zoek koolhydraten in ${searchTerm} op Google</a></p>
-            `;});
-    </script>
+    const matches = Object.keys(foodDatabase).filter(food => food.toLowerCase().startsWith(searchTerm));
+    result.innerHTML = matches.length 
+        ? matches.map(match => `
+            <strong>${match.charAt(0).toUpperCase() + match.slice(1)}</strong> 
+            bevat ${foodDatabase[match]}g koolhydraten per 100g
+        `).join('<br>')
+        : `
+            <p>Voedingsmiddel of drank niet gevonden in database.</p>
+            <p>
+                <a href="https://www.google.com/search?q=koolhydraten+in+${encodeURIComponent(searchTerm)}" target="_blank">
+                    Zoek de koolhydraten voor <span style="color: #00008b; font-weight: bold; font-size: 1.1em;">${searchTerm}</span> op Google
+                </a>
+            </p>
+        `;
+});
+</script>
 </body>
 </html>
