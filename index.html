@@ -72,13 +72,17 @@
             font-size: 24px;
         }
 
-        h2 { color: white; text-align: center; font-size: 18px; font-style: italic; text-shadow: 2px 2px 3px #2c3e50;
+        .author-info {
+            text-align: center;
+            font-size: 16px;
+            color: #2c3e50; /* Donkere tekstkleur */
+            margin-top: 20px;
+            font-weight: bold; /* Zorgt ervoor dat de tekst vetgedrukt is */
         }
     </style>
 </head>
 <body>
     <h1>Koolhydraten Calculator</h1>
-    <h2>aangeboden door Diabetes Liga Midden Limburg</h2>
     
     <div class="search-container">
         <input type="text" id="searchInput" placeholder="Typ een voedingsmiddel of drank..." autocomplete="off">
@@ -86,6 +90,8 @@
     </div>
 
     <div class="result" id="result"></div>
+
+    <p class="author-info">Auteur: Diabetes Liga Midden-Limburg</p>
 
     <!-- Registreren van de service worker -->
     <script>
@@ -2499,7 +2505,7 @@
     "Zult zure": 1.7,
     "Zuurtjes": 95,
     "Zuurtjes suikervrij": 0
- };
+     };
 
         // Resetknop functionaliteit
         document.getElementById('resetButton').addEventListener('click', () => {
