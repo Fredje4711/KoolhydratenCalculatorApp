@@ -32,7 +32,7 @@
 
         input {
             padding: 10px;
-            width: 60%; /* 1/3 smaller gemaakt */
+            width: 60%;
             max-width: 200px;
             font-size: 16px;
             border: 2px solid #00008b;
@@ -62,8 +62,8 @@
         }
 
         .result p {
-            margin: 5px 0; /* Verklein de marge tussen de paragrafen */
-            padding: 0; /* Verwijder extra padding rond de paragrafen */
+            margin: 5px 0;
+            padding: 0;
         }
 
         h1 {
@@ -74,10 +74,16 @@
 
         .author-info {
             text-align: center;
-            font-size: 16px;
-            color: #2c3e50; /* Donkere tekstkleur */
+            font-size: 14px;
+            color: #2c3e50;
             margin-top: 20px;
-            font-weight: bold; /* Zorgt ervoor dat de tekst vetgedrukt is */
+            font-weight: bold;
+        }
+
+        /* Extra styling voor het vergrote, vetgedrukte zoekwoord */
+        .search-word {
+            color: #00008b;
+			font-size: 1.3em; /* Vergroot de tekst */
         }
     </style>
 </head>
@@ -91,20 +97,9 @@
 
     <div class="result" id="result"></div>
 
-    <p class="author-info">Auteur: Diabetes Liga Midden-Limburg</p>
+    <p class="author-info">Auteur: Diabetes Liga Midden Limburg</p>
 
-    <!-- Registreren van de service worker -->
     <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
-                .then((registration) => {
-                    console.log('Service Worker geregistreerd met scope:', registration.scope);
-                })
-                .catch((error) => {
-                    console.log('Service Worker registratie mislukt:', error);
-                });
-        }
-
         const foodDatabase = {
     "Aardappel(product) naturel voorgekookt koelvers": 16.6,
     "Aardappelbolletjes/-wafeltjes ed dv onbereid": 24.3,
@@ -2505,7 +2500,7 @@
     "Zult zure": 1.7,
     "Zuurtjes": 95,
     "Zuurtjes suikervrij": 0
-     };
+  };
 
         // Resetknop functionaliteit
         document.getElementById('resetButton').addEventListener('click', () => {
@@ -2523,15 +2518,22 @@
                 return;
             }
 
-            console.log(`Gebruikersinvoer: ${searchValue}`);
-
-            // Zoek alle overeenkomende sleutels die beginnen met of het ingevoerde deel bevatten
+            // Zoek naar overeenkomsten in de database
             const matches = Object.keys(foodDatabase).filter(key => key.toLowerCase().startsWith(searchValue));
 
             if (matches.length > 0) {
-                resultDiv.innerHTML = matches.map(key => `<p>${key}: ${foodDatabase[key]} gram per 100 gram.</p>`).join('');
+                // Als er overeenkomsten zijn, geef ze weer
+                resultDiv.innerHTML = matches.map(key => `
+                    <strong>${key.charAt(0).toUpperCase() + key.slice(1)}</strong> 
+                    bevat ${foodDatabase[key]} g koolhydraten per 100 g
+                `).join('<br>');
             } else {
-                resultDiv.textContent = 'Geen gegevens gevonden voor het ingevoerde product.';
+                // Als het product niet in de database staat, geef een link om het online te zoeken
+                resultDiv.innerHTML = `
+                    <p>Voedingsmiddel of drank niet gevonden in database.</p>
+                    <p><a href="https://www.google.com/search?q=koolhydraten+in+${encodeURIComponent(searchValue)}" target="_blank">
+                    Zoek koolhydraten in <span class="search-word">${searchValue}</span> op Google</a></p>
+                `;
             }
         });
     </script>
