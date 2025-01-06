@@ -1,6 +1,6 @@
 {
   "name": "Koolhydraten Calculator",
-  "short_name": "KoolhydratenApp",
+  "short_name": "Koolhydraten",
   "description": "Zoek voedingsmiddelen en hun koolhydratengehalte.",
   "start_url": "index.html",
   "display": "standalone",
