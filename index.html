@@ -11,8 +11,7 @@
     <!-- Iconen voor de browser-tab en PWA -->
     <link rel="icon" href="icon-192x192.png" sizes="192x192" type="image/png">
     <link rel="icon" href="icon-512x512.png" sizes="512x512" type="image/png">
-
-    <style>
+ <style>
         body {
             font-family: Arial, sans-serif;
             max-width: 450px;
@@ -72,7 +71,7 @@
             font-size: 24px;
         }
 
-        .author-info {
+       .author-info {
             text-align: center;
             font-size: 14px;
             color: #2c3e50;
@@ -80,6 +79,21 @@
             font-weight: bold;
         }
 
+        .author-info a {
+            text-decoration: none;
+            display: inline-flex;
+           align-items: center;
+         
+        }
+
+        .author-info img {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+           vertical-align:middle;
+           
+        }
+        
         /* Extra styling voor het vergrote, vetgedrukte zoekwoord */
         .search-word {
             color: #00008b;
@@ -97,8 +111,13 @@
 
     <div class="result" id="result"></div>
 
-    <p class="author-info">Auteur: Diabetes Liga Midden-Limburg</p>
-
+<p class="author-info">
+    Auteur: Diabetes Liga Midden-Limburg<br>
+    <a href="https://www.dlml.be" target="_blank" title="Bezoek ook onze website Diabetes Liga Midden-Limburg" style="display: inline-flex; align-items: center;">
+        <img src="world_icon.png" alt="World icon" style="width: 20px; height: 20px; margin-right: 5px;"/>
+        <span style="font-size: 16px;">www.dlml.be</span>
+    </a>
+</p>
     <script>
         const foodDatabase = {
     "Aardappel(product) naturel voorgekookt koelvers": 16.6,
