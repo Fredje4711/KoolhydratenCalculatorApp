@@ -2,125 +2,176 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Koolhydraten Calculator</title>
-
-    <!-- Koppeling naar het manifest-bestand -->
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- Iconen voor de browser-tab en PWA -->
-    <link rel="icon" href="icon-192x192.png" sizes="192x192" type="image/png">
-    <link rel="icon" href="icon-512x512.png" sizes="512x512" type="image/png">
- <style>
+    <style>
+        :root {
+            --liga-blauw: #23A9E4;
+            --liga-donker: #00008b;
+            --accent: #d81b60;
+        }
         body {
             font-family: Arial, sans-serif;
-            max-width: 450px;
+            max-width: 500px;
             margin: 0 auto;
-            padding: 2px;
-            background: #23A9E4;
-        }
-
-        .search-container {
-            margin: 20px 0;
-            text-align: center;
+            padding: 5px;
+            background: var(--liga-blauw);
+            height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-
-        input {
-            padding: 10px;
-            width: 60%;
-            max-width: 200px;
-            font-size: 16px;
-            border: 2px solid #00008b;
-            border-radius: 5px;
-        }
-
-        button {
-            padding: 10px 15px;
-            font-size: 16px;
-            background-color: #00008b;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #1d4e89;
-        }
-
-        .result {
-            margin-top: 20px;
-            padding: 7.5px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,139,1);
-        }
-
-        .result p {
-            margin: 5px 0;
-            padding: 0;
-        }
-
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            font-size: 24px;
-        }
-
-       .author-info {
-            text-align: center;
-            font-size: 14px;
-            color: #2c3e50;
-            margin-top: 20px;
-            font-weight: bold;
-        }
-
-        .author-info a {
-            text-decoration: none;
-            display: inline-flex;
-           align-items: center;
-         
-        }
-
-        .author-info img {
-            width: 20px;
-            height: 20px;
-            margin-right: 5px;
-           vertical-align:middle;
-           
+            flex-direction: column;
+            overflow: hidden; /* Pagina zelf scrolt nooit */
         }
         
-        /* Extra styling voor het vergrote, vetgedrukte zoekwoord */
-        .search-word {
-            color: #00008b;
-			font-size: 1.3em; /* Vergroot de tekst */
+        .container { 
+            display: flex; 
+            flex-direction: column; 
+            height: 100%;
+            width: 100%;
+        }
+
+        h1 { color: white; font-size: 20px; margin: 10px 0; text-align: center; }
+        
+        .search-box {
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .input-row { display: flex; gap: 5px; margin-bottom: 5px; }
+        #searchInput { flex: 1; padding: 10px; font-size: 16px; border: 2px solid var(--liga-donker); border-radius: 8px; outline: none; }
+        #resetBtn { padding: 0 12px; background: var(--liga-donker); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: bold; }
+
+        .weight-row { font-size: 14px; color: #444; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        #weightInput { width: 60px; padding: 5px; text-align: center; font-weight: bold; border: 2px solid var(--accent); border-radius: 8px; }
+        
+        /* HET RESULTATENVENSTER - STANDAARD VERBORGEN */
+        #result {
+            display: none; /* Wordt pas zichtbaar bij zoeken */
+            background: white;
+            border-radius: 12px;
+            text-align: left;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            flex-grow: 1;
+            overflow-y: auto; 
+            margin-bottom: 10px;
+            scroll-behavior: smooth;
+        }
+
+        .food-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 2px 10px;
+        }
+        
+        .food-name { flex: 1; font-size: 14px; padding-right: 5px; line-height: 1.1; color: #222; padding-top: 6px; padding-bottom: 6px; }
+        .food-calc { text-align: right; min-width: 75px; line-height: 0.9; }
+        .calc-value {
+            color: var(--accent);
+            font-weight: 900;       /* Extra dik maken */
+            font-size: 15px;        /* Iets groter */
+        }
+        .per-unit {
+            display: block;
+            font-size: 10px;        /* Iets groter gemaakt voor leesbaarheid */
+            color: #555;            /* Veel donkerder grijs voor meer contrast */
+            font-weight: bold;      /* Dikgedrukt gemaakt voor extra scherpte */
+            margin-top: 0.8px;        /* Strakker tegen het getal aan */
+            letter-spacing: 0.3px;  /* Letters iets verder uit elkaar voor scherpte */
+        }
+
+        .footer { 
+            padding: 10px 0; 
+            font-size: 12px; 
+            font-weight: bold; 
+            color: white; 
+            text-align: center;
+        }
+
+        /* DE ZWEVENDE KNOP - TRANSPARANT EN AUTOMATISCH */
+        .floating-up-btn {
+            position: fixed;
+            bottom: 60px; 
+            right: 20px;
+            width: 55px;
+            height: 55px;
+            background-color: var(--liga-donker);
+            color: white;
+            border-radius: 50%;
+            display: none; /* Start onzichtbaar */
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 9999; 
+            border: 2px solid white;
+            cursor: pointer;
+            font-size: 28px;
+            opacity: 0.6; /* Transparant effect */
+            transition: opacity 0.3s, transform 0.2s;
+            user-select: none;
+        }
+        .floating-up-btn:hover, .floating-up-btn:active { 
+            opacity: 1; /* Volledig zichtbaar bij aanraken */
+            transform: scale(1.1);
         }
     </style>
 </head>
 <body>
+
+<!-- De knop -->
+<div id="upBtn" class="floating-up-btn" onclick="naarBoven()">
+    ⬆
+</div>
+
+<div class="container">
     <h1>Koolhydraten Calculator</h1>
-    
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Typ voedingsmiddel/drank..." autocomplete="off">
-        <button id="resetButton">Reset</button>
+
+    <div class="search-box">
+        <div class="input-row">
+            <input type="text" id="searchInput" placeholder="Zoek voedingsmiddel..." autocomplete="off">
+            <button id="resetBtn">Wissen</button>
+        </div>
+        <div class="weight-row">
+            Portie: <input type="number" id="weightInput" value="100"> gram
+        </div>
     </div>
 
-    <div class="result" id="result"></div>
+    <!-- Het witte venster -->
+    <div id="result">
+        <!-- Resultaten komen hier -->
+    </div>
 
-<p class="author-info">
-    Auteur: Diabetes Liga Midden-Limburg<br>
-    <a href="https://www.dlml.be" target="_blank" title="Bezoek ook onze website Diabetes Liga Midden-Limburg" style="display: inline-flex; align-items: center;">
-        <img src="world_icon.png" alt="World icon" style="width: 20px; height: 20px; margin-right: 5px;"/>
-        <span style="font-size: 16px;">www.dlml.be</span>
-    </a>
-</p>
-    <script>
-        const foodDatabase = {
-    "Aardappel(product) naturel voorgekookt koelvers": 16.6,
+    <div class="footer">
+        Diabetes Liga Midden-Limburg - <a href="https://www.dlml.be" target="_blank" style="color:white; text-decoration:none;">www.dlml.be</a>
+    </div>
+</div>
+
+<script>
+    const resultDiv = document.getElementById('result');
+    const upBtn = document.getElementById('upBtn');
+    const searchInput = document.getElementById('searchInput');
+    const weightInput = document.getElementById('weightInput');
+
+    // NAAR BOVEN SCROLLEN
+    function naarBoven() {
+        resultDiv.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // CONTROLEER SCROLL POSITIE VOOR DE KNOP
+    resultDiv.addEventListener('scroll', () => {
+        if (resultDiv.scrollTop > 150) {
+            upBtn.style.display = 'flex';
+        } else {
+            upBtn.style.display = 'none';
+        }
+    });
+
+    // DATABASE
+    const foodDatabase = {
+        "Aardappel(product) naturel voorgekookt koelvers": 16.6,
     "Aardappelbolletjes/-wafeltjes ed dv onbereid": 24.3,
     "Aardappelen Eigenheimer z schil gekookt": 15.7,
     "Aardappelen gebakken": 16.4,
@@ -2519,42 +2570,52 @@
     "Zult zure": 1.7,
     "Zuurtjes": 95,
     "Zuurtjes suikervrij": 0
-  };
+    };
 
-        // Resetknop functionaliteit
-        document.getElementById('resetButton').addEventListener('click', () => {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('result').textContent = '';
-        });
+    function search() {
+        const query = searchInput.value.toLowerCase().trim();
+        const weight = parseFloat(weightInput.value) || 0;
 
-        // Zoekfunctionaliteit
-        document.getElementById('searchInput').addEventListener('input', () => {
-            const searchValue = document.getElementById('searchInput').value.trim().toLowerCase();
-            const resultDiv = document.getElementById('result');
+        if (query === "") {
+            resultDiv.style.display = 'none'; // Verberg venster als er geen zoekopdracht is
+            upBtn.style.display = 'none';
+            return;
+        }
 
-            if (searchValue === '') {
-                resultDiv.textContent = '';
-                return;
-            }
+        const matches = Object.keys(foodDatabase).filter(name => 
+            name.toLowerCase().includes(query)
+        );
 
-            // Zoek naar overeenkomsten in de database
-            const matches = Object.keys(foodDatabase).filter(key => key.toLowerCase().startsWith(searchValue));
-
-            if (matches.length > 0) {
-                // Als er overeenkomsten zijn, geef ze weer
-                resultDiv.innerHTML = matches.map(key => `
-                    <strong>${key.charAt(0).toUpperCase() + key.slice(1)}</strong> 
-                    bevat ${foodDatabase[key]} g koolhydraten per 100 g
-                `).join('<br>');
-            } else {
-                // Als het product niet in de database staat, geef een link om het online te zoeken
-                resultDiv.innerHTML = `
-                    <p>Voedingsmiddel of drank niet gevonden in database.</p>
-                    <p><a href="https://www.google.com/search?q=koolhydraten+in+${encodeURIComponent(searchValue)}" target="_blank">
-                    Zoek koolhydraten in <span class="search-word">${searchValue}</span> op Google</a></p>
+        if (matches.length > 0) {
+            resultDiv.style.display = 'block'; // Toon venster
+            resultDiv.innerHTML = matches.map(name => {
+                const carbs100 = foodDatabase[name];
+                const total = ((carbs100 / 100) * weight).toFixed(1);
+                return `
+                    <div class="food-item">
+                        <div class="food-name"><strong>${name}</strong></div>
+                        <div class="food-calc">
+                            <span class="calc-value">${total}g</span>
+                            <span class="per-unit">in ${weight}g</span>
+                        </div>
+                    </div>
                 `;
-            }
-        });
-    </script>
+            }).join('');
+        } else {
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<p style="padding:15px; color:#666; font-size:13px; text-align:center;">Niet gevonden in lijst.</p>';
+        }
+    }
+
+    searchInput.addEventListener('input', search);
+    weightInput.addEventListener('input', search);
+    
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        searchInput.value = '';
+        weightInput.value = '100';
+        search();
+    });
+</script>
+
 </body>
 </html>
