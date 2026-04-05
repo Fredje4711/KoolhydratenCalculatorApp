@@ -19,24 +19,15 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Pagina zelf scrolt nooit */
+            overflow: hidden;
         }
         
-        .container { 
-            display: flex; 
-            flex-direction: column; 
-            height: 100%;
-            width: 100%;
-        }
-
+        .container { display: flex; flex-direction: column; height: 100%; width: 100%; }
         h1 { color: white; font-size: 20px; margin: 10px 0; text-align: center; }
         
         .search-box {
-            background: white;
-            padding: 10px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background: white; padding: 10px; border-radius: 12px;
+            margin-bottom: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .input-row { display: flex; gap: 5px; margin-bottom: 5px; }
@@ -46,85 +37,46 @@
         .weight-row { font-size: 14px; color: #444; display: flex; align-items: center; justify-content: center; gap: 8px; }
         #weightInput { width: 60px; padding: 5px; text-align: center; font-weight: bold; border: 2px solid var(--accent); border-radius: 8px; }
         
-        /* HET RESULTATENVENSTER - STANDAARD VERBORGEN */
         #result {
-            display: none; /* Wordt pas zichtbaar bij zoeken */
-            background: white;
-            border-radius: 12px;
-            text-align: left;
+            display: none;
+            background: white; border-radius: 12px; text-align: left;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            flex-grow: 1;
-            overflow-y: auto; 
-            margin-bottom: 10px;
+            flex-grow: 1; overflow-y: auto; margin-bottom: 10px;
             scroll-behavior: smooth;
         }
 
         .food-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #f0f0f0;
-            padding: 2px 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #f0f0f0; padding: 1px 10px; line-height: 1;
         }
         
-        .food-name { flex: 1; font-size: 14px; padding-right: 5px; line-height: 1.1; color: #222; padding-top: 6px; padding-bottom: 6px; }
+        .food-name { flex: 1; font-size: 14px; padding-right: 5px; line-height: 1.1; color: #222; padding-top: 4px; padding-bottom: 4px; }
         .food-calc { text-align: right; min-width: 75px; line-height: 0.9; }
-        .calc-value {
-            color: var(--accent);
-            font-weight: 900;       /* Extra dik maken */
-            font-size: 15px;        /* Iets groter */
-        }
-        .per-unit {
-            display: block;
-            font-size: 10px;        /* Iets groter gemaakt voor leesbaarheid */
-            color: #555;            /* Veel donkerder grijs voor meer contrast */
-            font-weight: bold;      /* Dikgedrukt gemaakt voor extra scherpte */
-            margin-top: 0.8px;        /* Strakker tegen het getal aan */
-            letter-spacing: 0.3px;  /* Letters iets verder uit elkaar voor scherpte */
-        }
 
-        .footer { 
-            padding: 10px 0; 
-            font-size: 12px; 
-            font-weight: bold; 
-            color: white; 
-            text-align: center;
-        }
+        /* SCHERPERE WEERGAVE RECHTS */
+        .calc-value { color: var(--accent); font-weight: 900; font-size: 15px; }
+        .per-unit { display: block; font-size: 10px; color: #444; font-weight: bold; margin-top: 1px; letter-spacing: 0.2px; }
 
-        /* DE ZWEVENDE KNOP - TRANSPARANT EN AUTOMATISCH */
+        .footer { padding: 10px 0; font-size: 12px; font-weight: bold; color: white; text-align: center; }
+
         .floating-up-btn {
-            position: fixed;
-            bottom: 60px; 
-            right: 20px;
-            width: 55px;
-            height: 55px;
-            background-color: var(--liga-donker);
-            color: white;
-            border-radius: 50%;
-            display: none; /* Start onzichtbaar */
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 9999; 
-            border: 2px solid white;
-            cursor: pointer;
-            font-size: 28px;
-            opacity: 0.6; /* Transparant effect */
-            transition: opacity 0.3s, transform 0.2s;
-            user-select: none;
+            position: fixed; bottom: 60px; right: 20px; width: 55px; height: 55px;
+            background-color: var(--liga-donker); color: white; border-radius: 50%;
+            display: none; align-items: center; justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 9999; 
+            border: 2px solid white; cursor: pointer; font-size: 28px;
+            opacity: 0.6; transition: opacity 0.3s, transform 0.2s;
         }
-        .floating-up-btn:hover, .floating-up-btn:active { 
-            opacity: 1; /* Volledig zichtbaar bij aanraken */
-            transform: scale(1.1);
-        }
+        .floating-up-btn:active { opacity: 1; transform: scale(1.1); }
+
+        /* STYLING VOOR DE GOOGLE LINK */
+        .not-found { padding: 20px; text-align: center; color: #555; font-size: 14px; line-height: 1.5; }
+        .google-link { color: var(--liga-donker); font-weight: bold; text-decoration: underline; display: block; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<!-- De knop -->
-<div id="upBtn" class="floating-up-btn" onclick="naarBoven()">
-    ⬆
-</div>
+<div id="upBtn" class="floating-up-btn" onclick="naarBoven()">⬆</div>
 
 <div class="container">
     <h1>Koolhydraten Calculator</h1>
@@ -135,14 +87,11 @@
             <button id="resetBtn">Wissen</button>
         </div>
         <div class="weight-row">
-            Portie: <input type="number" id="weightInput" value="100"> gram
+            Mijn portie: <input type="number" id="weightInput" value="100"> gram
         </div>
     </div>
 
-    <!-- Het witte venster -->
-    <div id="result">
-        <!-- Resultaten komen hier -->
-    </div>
+    <div id="result"></div>
 
     <div class="footer">
         Diabetes Liga Midden-Limburg - <a href="https://www.dlml.be" target="_blank" style="color:white; text-decoration:none;">www.dlml.be</a>
@@ -155,21 +104,13 @@
     const searchInput = document.getElementById('searchInput');
     const weightInput = document.getElementById('weightInput');
 
-    // NAAR BOVEN SCROLLEN
-    function naarBoven() {
-        resultDiv.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    function naarBoven() { resultDiv.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-    // CONTROLEER SCROLL POSITIE VOOR DE KNOP
     resultDiv.addEventListener('scroll', () => {
-        if (resultDiv.scrollTop > 150) {
-            upBtn.style.display = 'flex';
-        } else {
-            upBtn.style.display = 'none';
-        }
+        upBtn.style.display = resultDiv.scrollTop > 150 ? 'flex' : 'none';
     });
 
-    // DATABASE
+    // DATABASE (Kopieer uw volledige lijst hieronder)
     const foodDatabase = {
         "Aardappel(product) naturel voorgekookt koelvers": 16.6,
     "Aardappelbolletjes/-wafeltjes ed dv onbereid": 24.3,
@@ -2577,17 +2518,16 @@
         const weight = parseFloat(weightInput.value) || 0;
 
         if (query === "") {
-            resultDiv.style.display = 'none'; // Verberg venster als er geen zoekopdracht is
+            resultDiv.style.display = 'none';
             upBtn.style.display = 'none';
             return;
         }
 
-        const matches = Object.keys(foodDatabase).filter(name => 
-            name.toLowerCase().includes(query)
-        );
+        const matches = Object.keys(foodDatabase).filter(name => name.toLowerCase().includes(query));
+
+        resultDiv.style.display = 'block';
 
         if (matches.length > 0) {
-            resultDiv.style.display = 'block'; // Toon venster
             resultDiv.innerHTML = matches.map(name => {
                 const carbs100 = foodDatabase[name];
                 const total = ((carbs100 / 100) * weight).toFixed(1);
@@ -2602,8 +2542,15 @@
                 `;
             }).join('');
         } else {
-            resultDiv.style.display = 'block';
-            resultDiv.innerHTML = '<p style="padding:15px; color:#666; font-size:13px; text-align:center;">Niet gevonden in lijst.</p>';
+            // GOOGLE ZOEK HULP INDIEN NIETS GEVONDEN
+            resultDiv.innerHTML = `
+                <div class="not-found">
+                    Niet gevonden in onze lijst.<br>
+                    <a href="https://www.google.com/search?q=koolhydraten+in+${encodeURIComponent(query)}" target="_blank" class="google-link">
+                        Zoek op Google naar "${query}"
+                    </a>
+                </div>
+            `;
         }
     }
 
@@ -2611,9 +2558,7 @@
     weightInput.addEventListener('input', search);
     
     document.getElementById('resetBtn').addEventListener('click', () => {
-        searchInput.value = '';
-        weightInput.value = '100';
-        search();
+        searchInput.value = ''; weightInput.value = '100'; search();
     });
 </script>
 
