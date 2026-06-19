@@ -110,6 +110,7 @@
         upBtn.style.display = resultDiv.scrollTop > 150 ? 'flex' : 'none';
     });
 
+
     // DATABASE (Kopieer uw volledige lijst hieronder)
     const foodDatabase = {
         "Aardappel(product) naturel voorgekookt koelvers": 16.6,
@@ -2523,7 +2524,22 @@
             return;
         }
 
-        const matches = Object.keys(foodDatabase).filter(name => name.toLowerCase().includes(query));
+        // 1. Zoek alle items die de letters bevatten
+        let matches = Object.keys(foodDatabase).filter(name => 
+            name.toLowerCase().includes(query)
+        );
+
+        // 2. Sorteer: items die BEGINNEN met de letters bovenaan, daarna de rest alfabetisch
+        matches.sort((a, b) => {
+            const aLow = a.toLowerCase();
+            const bLow = b.toLowerCase();
+            const startsA = aLow.startsWith(query);
+            const startsB = bLow.startsWith(query);
+
+            if (startsA && !startsB) return -1;
+            if (!startsA && startsB) return 1;
+            return aLow.localeCompare(bLow);
+        });
 
         resultDiv.style.display = 'block';
 
@@ -2531,9 +2547,14 @@
             resultDiv.innerHTML = matches.map(name => {
                 const carbs100 = foodDatabase[name];
                 const total = ((carbs100 / 100) * weight).toFixed(1);
+                
+                // HIGHLIGHTING: Maak de ingetypte letters vetgedrukt in de naam
+                const regex = new RegExp(`(${query})`, 'gi');
+                const highlightedName = name.replace(regex, "<strong>$1</strong>");
+
                 return `
                     <div class="food-item">
-                        <div class="food-name"><strong>${name}</strong></div>
+                        <div class="food-name">${highlightedName}</div>
                         <div class="food-calc">
                             <span class="calc-value">${total}g</span>
                             <span class="per-unit">in ${weight}g</span>
@@ -2558,7 +2579,10 @@
     weightInput.addEventListener('input', search);
     
     document.getElementById('resetBtn').addEventListener('click', () => {
-        searchInput.value = ''; weightInput.value = '100'; search();
+        searchInput.value = ''; 
+        weightInput.value = '100'; 
+        search();
+        searchInput.focus(); // Zet de cursor direct weer in het zoekveld
     });
 </script>
 
