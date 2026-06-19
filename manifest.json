@@ -4,8 +4,8 @@
   "description": "Zoek voedingsmiddelen en hun koolhydratengehalte.",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#4CAF50",
+  "background_color": "#23A9E4",
+  "theme_color": "#23A9E4",
   "icons": [
     {
       "src": "icon-192x192.png",
